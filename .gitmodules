@@ -1,0 +1,6 @@
+[submodule "dbconnector"]
+	path = dbconnector
+	url = https://github.com/maddiethegm/dbconnector
+[submodule "services/dbconnector"]
+	path = services/dbconnector
+	url = https://github.com/maddiethegm/dbconnector
