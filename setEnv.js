@@ -96,13 +96,3 @@ if (!fs.existsSync(envPath)) {
 } else {
     console.log('.env file already exists.');
 }
-
-/**
- * Checks if the client environment file exists and creates it with default values if not.
- */
-if (!fs.existsSync(clientEnvPath)) {
-    console.log('.env file not found, creating one with default values...');
-    fs.writeFileSync(clientEnvPath, defaultClientEnvContent);
-} else {
-    console.log('./client/.env file already exists.');
-}
