@@ -1,9 +1,16 @@
 
 # Home-Inventory-Controller
 
-API server for Home Inventory system
+## API server for Home Inventory system
 
-### API Definitions:
+To deploy, install [PM2-installer](https://github.com/jessety/pm2-installer).
+
+From an elevated terminal, navigate to the main directory for the Controller, and run:
+`pm2 start server.js`
+And then:
+`pm2 save`
+
+## API Definitions
 
 <https://github.com/maddiethegm/Home-Inventory/blob/main/openapi.yaml>
 
