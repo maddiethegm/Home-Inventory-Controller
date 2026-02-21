@@ -25,7 +25,7 @@
     "ldap-authentication": "^3.3.4",
     "mssql": "^11.0.1",
     "mysql2": "^3.14.1",
-    "nodemon": "^3.1.10",
+    "nodemon": "^3.1.14",
     "oracledb": "^6.8.0",
     "pg": "^8.16.3",
     "socket.io": "^4.8.1",
