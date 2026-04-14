@@ -22,4 +22,5 @@ yarn-error.log*
 init.sql
 init.tsql
 super.md
+summary.md
 config.*

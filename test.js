@@ -109,7 +109,8 @@ async function main() {
 
     // 4. Test Auth Route
     console.log('\n--- Testing Original Auth Route ---');
-    const loginPayload = { Username: `${config.testUserId}`, password: `${config.testUserPW}` };
+    const loginPayload = { Username: `${config.testUserID}`, password: `${config.testUserPW}` };
+    console.log(loginPayload);
     const loginResponse = await request('/api/auth/login', 'POST', loginPayload);
 
     // 5. Test NEW ItemController Routes (Optional)
@@ -160,8 +161,8 @@ async function main() {
    // 12. TEST USER OWNED ITEMS (NEW)
     console.log('\n--- Testing NEW ItemController GET /user-owned/:userId ---');
     // In a real scenario, you'd pass an actual user ID from the database
-    const testUserId = "3B43D052-E440-4400-B820-BC1A1FF3839E";
-    const userItemsResponse = await request(`/api/inventory/user-owned/${testUserId}`, 'GET');
+
+    const userItemsResponse = await request(`/api/inventory/user-owned/${config.testUserId}`, 'GET');
     console.log(`User Owned Items: Found ${userItemsResponse ? userItemsResponse.length : 0} items for this user.`);
 
    // Store selected IDs for PUT/DELETE operations
