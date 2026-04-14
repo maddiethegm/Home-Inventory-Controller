@@ -1,0 +1,171 @@
+// oop/src/controllers/LocationController.js
+const CoreController = require('./CoreController');
+const LocationService = require('../services/LocationService');
+
+/**
+ * Controller Class for Locations.
+ */
+class LocationController extends CoreController {
+    constructor(config = null, req = null, res = null) {
+        super(null, null, null); 
+        
+        this.service = new LocationService(config); 
+        
+        if (req) {
+            this.req = req;
+        }
+        
+        if (res) {
+            this.res = res;
+        } else {
+            console.warn('LocationController: No response object provided. Using mock response.');
+            this.res = {
+                status: function(code) {
+                    this.statusCode = code;
+                    return this;
+                },
+                json: function(data) {
+                    console.log(`[Mock Response] Sending JSON with status ${this.statusCode || 200}:`, data);
+                    return data;
+                }
+            };
+        }
+    }
+
+    async handleGet() {
+        try {
+            console.log('LocationController: Fetching locations list...');
+            
+            const isChildrenRoute = !!this.req.params.ID;
+            
+            if (isChildrenRoute && this.req.params.ID) {
+                console.log('LocationController: Fetching child locations for location:', this.req.params.ID);
+                
+                // Verify path pattern
+                const path = this.req.route.path || '';
+                if (!path.includes('/children')) {
+                    throw new Error('Route path mismatch for children operation');
+                }
+                
+                const result = await this.service.findChildren(this.req.params.ID);
+                return this.res.json(result || []);
+            } else {
+                // Standard read all with filters
+                const filters = this.req?.query || {};
+                
+                if (Object.keys(filters).length > 0) {
+                    console.log('LocationController: Applying filter parameters:', filters);
+                    const result = await this.service.findFiltered(filters);
+                    return this.res.json(result);
+                } else {
+                    // Standard read all
+                    console.log('LocationController: Fetching all locations...');
+                    const result = await this.service.find();
+                    return this.res.json(result);
+                }
+            }
+
+        } catch (err) {
+            console.error('LocationController: GET Error:', err.message);
+            
+            if (!this.res) {
+                 throw err; 
+            } else {
+                this.res.status(500).json({ error: 'Database query failed' });
+            }
+        }
+    }
+
+
+    async handlePost() {
+        try {
+            console.log('LocationController: Adding new location...');
+            
+            const data = this.req.body; 
+            
+            if (!data.Name) {
+                throw new Error('Name is required');
+            }
+
+            const result = await this.service.create(data);
+            
+            if (result.success) {
+                return this.res.status(201).json({ success: true, id: result.ID });
+            } else {
+                 throw new Error('Creation failed');
+            }
+
+        } catch (err) {
+             console.error('LocationController: POST Error:', err.message);
+             
+             if (!this.res) {
+                throw err; 
+             } else {
+                this.res.status(500).json({ error: 'Database insertion failed' });
+             }
+        }
+    }
+
+
+    async handlePut() {
+        try {
+            console.log('LocationController: Updating location...');
+            
+            const { ID } = this.req.params; 
+            const updates = this.req.body; 
+
+            if (!ID || !Object.keys(updates).length > 0) {
+                throw new Error('Invalid update request');
+            }
+
+            const result = await this.service.update(ID, updates);
+            
+            if (result.success) {
+                return this.res.json({ success: true });
+            } else {
+                 throw new Error('Update failed');
+            }
+
+        } catch (err) {
+             console.error('LocationController: PUT Error:', err.message);
+             
+             if (!this.res) {
+                throw err; 
+             } else {
+                this.res.status(500).json({ error: 'Database update failed' });
+             }
+        }
+    }
+
+
+    async handleDelete() {
+        try {
+            console.log('LocationController: Deleting location...');
+            
+            const { ID } = this.req.params; 
+            
+            if (!ID) {
+                throw new Error('Location ID is required for deletion');
+            }
+
+            const result = await this.service.remove(ID);
+            
+            if (result.success) {
+                return this.res.json({ success: true });
+            } else {
+                 throw new Error('Deletion failed');
+            }
+
+        } catch (err) {
+             console.error('LocationController: DELETE Error:', err.message);
+             
+             if (!this.res) {
+                throw err; 
+             } else {
+                this.res.status(500).json({ error: 'Database deletion failed' });
+             }
+        }
+    }
+}
+
+module.exports = LocationController;
